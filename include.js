@@ -1,4 +1,4 @@
-// Simple partial loader: <div data-include="header.html"></div>
+// simple client-side partial loader
 (async function(){
   const nodes = document.querySelectorAll("[data-include]");
   for (const el of nodes){
@@ -11,11 +11,9 @@
     }catch(e){ console.warn("include failed:", file, e); }
   }
 })().then(()=>{
-  // mark active nav item by current path
   const path = location.pathname.replace(/\/index\.html?$/,"/");
   document.querySelectorAll('a[data-nav]').forEach(a=>{
-    const href = a.getAttribute('href');
-    if (!href) return;
+    const href = a.getAttribute('href')||"";
     const hp = href.replace(/\/index\.html?$/,"/");
     if (hp === path){ a.classList.add('is-active'); }
   });

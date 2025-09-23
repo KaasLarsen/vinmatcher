@@ -5,167 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Vinmatcher – find vin til din mad</title>
   <meta name="description" content="Skriv ret, stemning, land eller stil – vi matcher vin og viser de bedste køb fra vores partnere.">
-  <style>
-    :root{
-      /* farver */
-      --bg:#ffffff;
-      --ink:#0f0f10;
-      --muted:#6b7280;
-      --line:#e6e8ec;
-      --chip:#f6f7f9;
-      --brand:#7B1E3B;      /* bordeaux */
-      --brand-600:#5e152c;  /* mørkere bordeaux */
-      --brand-50:#f8eef2;   /* lys blush */
-      --cta:#111111;        /* sort knap */
-      --ok:#10b981;
-      --warn:#f59e0b;
-
-      /* skygger og radius */
-      --shadow:0 1px 2px rgba(16,24,40,.06), 0 8px 24px rgba(16,24,40,.06);
-      --radius:14px;
-      --radius-pill:999px;
-
-      /* typografi */
-      --h1:38px;
-      --h2:22px;
-      --h3:18px;
-      --body:16px;
-      --small:13px;
-
-      /* layout */
-      --container:1100px;
-      --space:48px;
-    }
-
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font:400 var(--body)/1.55 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;
-      color:var(--ink);
-      background:linear-gradient(180deg, var(--brand-50) 0%, #fff 220px);
-    }
-
-    /* generelt layout */
-    .container{max-width:var(--container);margin:0 auto;padding:var(--space) 16px}
-    .section{margin-top:42px}
-    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
-    .card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
-    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:var(--radius-pill);background:var(--chip);border:1px solid var(--line);font-weight:700;font-size:14px}
-    .muted{color:var(--muted)}
-    .divider{height:1px;background:var(--line);border:0;margin:16px 0}
-
-    /* header */
-    .site-header{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line)}
-    .site-header .wrap{max-width:var(--container);margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 16px}
-    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
-    .logo{width:28px;height:28px}
-    .brand-name{font-weight:900;letter-spacing:.2px}
-    .nav{display:flex;gap:16px}
-    .nav a{color:#444;text-decoration:none;font-weight:800;padding:8px 10px;border-radius:10px}
-    .nav a:hover{background:#f6f7f9}
-    .nav a.is-active{background:#f0e7ea;color:var(--brand)}
-
-    /* hero */
-    .hero h1{font-size:var(--h1);line-height:1.1;margin:8px 0}
-    .hero p{margin:0 0 16px;color:var(--muted)}
-    .search{position:relative}
-    .search input{
-      width:100%;padding:18px 18px 18px 48px;border:1px solid var(--line);border-radius:var(--radius);
-      font-size:18px;background:#fff;box-shadow:var(--shadow);transition:border .15s, box-shadow .15s
-    }
-    .search input:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 4px rgba(123,30,59,.08), var(--shadow)}
-    .search:before{content:"🔎";position:absolute;left:16px;top:50%;transform:translateY(-50%);opacity:.7}
-    .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    .chip{appearance:none;background:var(--chip);border:1px solid var(--line);padding:8px 12px;border-radius:var(--radius-pill);cursor:pointer;font-weight:700;font-size:14px}
-    .chip:hover{background:#eef1f5}
-    .chip.is-active{background:var(--brand-50);border-color:#e8d0d9;color:var(--brand-600)}
-
-    /* vin-kort */
-    .wine-card .title{font-weight:900;font-size:17px}
-    .wine-card .meta{color:var(--muted);font-size:14px}
-    .wine-card .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:var(--radius-pill);background:#f3f4f6;font-size:12px;font-weight:800}
-    .wine-card .badge:before{content:"★";opacity:.7}
-    .wine-card .row{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
-    .wine-card .price{font-weight:900;font-size:18px}
-    .btn{
-      display:inline-flex;align-items:center;gap:8px;padding:12px 14px;border-radius:12px;background:var(--cta);color:#fff;text-decoration:none;font-weight:900;letter-spacing:.2px;
-      box-shadow:0 2px 0 rgba(0,0,0,.2);transition:transform .05s, box-shadow .15s, background .15s
-    }
-    .btn:hover{background:#000;box-shadow:0 6px 18px rgba(0,0,0,.2)}
-    .btn:active{transform:translateY(1px)}
-    .shop{display:inline-flex;align-items:center;gap:8px}
-    .shop-dot{width:10px;height:10px;border-radius:999px;background:var(--brand)}
-
-    /* kategori-bokse */
-    .cat-card{display:flex;flex-direction:column;gap:8px;min-height:120px}
-    .cat-card h3{font-size:var(--h3);margin:0;font-weight:900}
-    .cat-card p{margin:0;color:var(--muted)}
-    .cat-card a{margin-top:auto;align-self:flex-start}
-
-    /* “sådan virker det” */
-    .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
-    .step{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
-    .step h3{margin:0 0 6px;font-size:var(--h3)}
-    .num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:999px;background:var(--brand);color:#fff;font-weight:900;margin-right:8px}
-
-    /* artikler/guides */
-    .list-card{display:flex;justify-content:space-between;gap:16px;align-items:center}
-    .list-card h3{margin:0;font-size:var(--h3)}
-    .list-card p{margin:0;color:var(--muted)}
-    .arrow{font-weight:900}
-
-    /* newsletter */
-    .newsletter{display:flex;gap:12px;flex-wrap:wrap}
-    .newsletter input{flex:1;min-width:240px;padding:14px;border:1px solid var(--line);border-radius:12px}
-    .newsletter .btn{padding:12px 16px}
-
-    /* faq */
-    .faq{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-    .qa{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
-    .qa h3{margin:0 0 6px;font-size:var(--h3)}
-
-    /* footer */
-    .site-footer{border-top:1px solid var(--line);background:#fff;margin-top:42px}
-    .site-footer .wrap{max-width:var(--container);margin:0 auto;padding:24px 16px;display:grid;grid-template-columns:2fr 1fr 1fr;gap:18px}
-    .foot-brand{display:flex;align-items:center;gap:10px;margin-bottom:6px}
-    .foot-logo{width:22px;height:22px}
-    .list{list-style:none;margin:0;padding:0}
-    .list li{margin:6px 0}
-    .list a{text-decoration:none;color:#444}
-    .list a:hover{text-decoration:underline}
-    .tiny{font-size:12px;color:var(--muted)}
-
-    @media (max-width:900px){
-      .faq{grid-template-columns:1fr}
-      .site-footer .wrap{grid-template-columns:1fr}
-    }
-  </style>
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <!-- header -->
-  <header class="site-header">
-    <div class="wrap">
-      <a class="brand" href="#">
-        <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
-          <path fill="none" stroke="black" stroke-width="4" d="M18 6h28v8c0 9-7 16-16 16s-16-7-16-16V6z"/>
-          <path fill="none" stroke="black" stroke-width="4" d="M32 30v16m-10 12h20"/>
-          <path fill="black" d="M20 14c3 5 11 7 24 3 0 7-6 12-12 12s-12-5-12-12z"/>
-          <path fill="black" d="M44 44a2.5 2.5 0 0 1-3.5 0l-6-6a2.5 2.5 0 1 1 3.5-3.5l4.3 4.3 8.2-8.2a2.5 2.5 0 1 1 3.5 3.5l-10 10z"/>
-        </svg>
-        <span class="brand-name">Vinmatcher</span>
-      </a>
-      <nav class="nav">
-        <a href="#" class="is-active">Forside</a>
-        <a href="#">Artikler</a>
-        <a href="#">Guides</a>
-        <a href="#">Om</a>
-        <a href="#">Kontakt</a>
-      </nav>
-    </div>
-  </header>
+  <div data-include="/partials/header.html"></div>
 
-  <!-- hero -->
   <main class="container">
     <section class="hero section">
       <h1>Find vin til din mad på få sekunder</h1>
@@ -176,41 +20,38 @@
       <div class="chips" id="chips"></div>
     </section>
 
-    <!-- top matches -->
     <section class="section">
       <h2>Se dine bedste match her</h2>
       <div id="results" class="cards" aria-live="polite"></div>
-      <p class="tiny">Nogle links er affiliate – det koster ikke dig noget.</p>
+      <p class="tiny">Nogle links er affiliate – det koster ikke dig noget</p>
     </section>
 
-    <!-- kategorier -->
     <section class="section">
       <h2>Udforsk populære kategorier</h2>
       <div class="cards">
         <article class="card cat-card">
           <h3>Vin til bolognese</h3>
           <p>Syre og kirsebær fra klassisk italiensk rødvin</p>
-          <a class="btn" href="#" aria-label="Se vin til bolognese">Se anbefalinger</a>
+          <a class="btn" href="/vin-til-bolognese.html">Se anbefalinger</a>
         </article>
         <article class="card cat-card">
           <h3>Vin til grillmad</h3>
           <p>Kraft og krydder med plads til røg og glaze</p>
-          <a class="btn" href="#" aria-label="Se vin til grillmad">Se anbefalinger</a>
+          <a class="btn" href="/vin-til-grillmad.html">Se anbefalinger</a>
         </article>
         <article class="card cat-card">
           <h3>Vin til tapas</h3>
           <p>Frisk syre og frugt til mange små retter</p>
-          <a class="btn" href="#" aria-label="Se vin til tapas">Se anbefalinger</a>
+          <a class="btn" href="/vin-til-tapas.html">Se anbefalinger</a>
         </article>
         <article class="card cat-card">
           <h3>Vin til ostebord</h3>
           <p>Aromatik og krop til cremede og salte oste</p>
-          <a class="btn" href="#" aria-label="Se vin til ostebord">Se anbefalinger</a>
+          <a class="btn" href="/vin-til-ostebord.html">Se anbefalinger</a>
         </article>
       </div>
     </section>
 
-    <!-- sådan virker det -->
     <section class="section">
       <h2>Sådan virker det på siden</h2>
       <div class="steps">
@@ -233,7 +74,6 @@
       </div>
     </section>
 
-    <!-- artikler og guides -->
     <section class="section">
       <h2>Læs nye artikler og guides</h2>
       <div class="cards">
@@ -242,184 +82,29 @@
             <h3>Vin til sushi uden at blive for sødt</h3>
             <p>Sprød syre og let aromatik matcher ris og fisk</p>
           </div>
-          <a class="arrow" href="#" aria-label="Læs vin til sushi">→</a>
+          <a class="arrow" href="#">→</a>
         </article>
         <article class="card list-card">
           <div>
             <h3>Rødvin til pizza i hverdagen</h3>
             <p>Kirsebær og friskhed klæder tomatsauce</p>
           </div>
-          <a class="arrow" href="#" aria-label="Læs rødvin til pizza">→</a>
+          <a class="arrow" href="#">→</a>
         </article>
         <article class="card list-card">
           <div>
             <h3>Bobler til brunch og hygge</h3>
             <p>Let bitterhed og fine bobler renser ganen</p>
           </div>
-          <a class="arrow" href="#" aria-label="Læs bobler til brunch">→</a>
+          <a class="arrow" href="#">→</a>
         </article>
-      </div>
-    </section>
-
-    <!-- nyhedsbrev -->
-    <section class="section">
-      <h2>Få tilbud og tips i din mail</h2>
-      <div class="card">
-        <form class="newsletter" onsubmit="event.preventDefault(); alert('Tak for din tilmelding');">
-          <input type="email" placeholder="Skriv din e-mail her">
-          <button class="btn" type="submit">Tilmeld nyhedsbrev</button>
-        </form>
-        <p class="tiny" style="margin-top:8px">Vi sender kun korte opdateringer og gode køb</p>
-      </div>
-    </section>
-
-    <!-- faq -->
-    <section class="section">
-      <h2>Spørgsmål vi ofte får</h2>
-      <div class="faq">
-        <div class="qa">
-          <h3>Hvordan beregner i matchscore</h3>
-          <p class="muted">Vi vægter syre, tannin, sødme, krop, fad, aromatik og bobler efter din søgning</p>
-        </div>
-        <div class="qa">
-          <h3>Skal jeg betale ekstra via vores links</h3>
-          <p class="muted">Nej, prisen er den samme og vi får en lille kommission</p>
-        </div>
-        <div class="qa">
-          <h3>Kan jeg søge på stemning</h3>
-          <p class="muted">Ja, skriv for eksempel hyggestemning eller festlig aften</p>
-        </div>
-        <div class="qa">
-          <h3>Kommer der flere butikker og filtre</h3>
-          <p class="muted">Ja, vi bygger løbende nye partnere og bedre sortering</p>
-        </div>
       </div>
     </section>
   </main>
 
-  <!-- footer -->
-  <footer class="site-footer">
-    <div class="wrap">
-      <div>
-        <div class="foot-brand">
-          <svg class="foot-logo" viewBox="0 0 64 64" aria-hidden="true">
-            <path fill="none" stroke="black" stroke-width="4" d="M18 6h28v8c0 9-7 16-16 16s-16-7-16-16V6z"/>
-            <path fill="none" stroke="black" stroke-width="4" d="M32 30v16m-10 12h20"/>
-            <path fill="black" d="M20 14c3 5 11 7 24 3 0 7-6 12-12 12s-12-5-12-12z"/>
-            <path fill="black" d="M44 44a2.5 2.5 0 0 1-3.5 0l-6-6a2.5 2.5 0 1 1 3.5-3.5l4.3 4.3 8.2-8.2a2.5 2.5 0 1 1 3.5 3.5l-10 10z"/>
-          </svg>
-          <strong>Vinmatcher</strong>
-        </div>
-        <p class="tiny">Nogle links er affiliate – det koster ikke dig noget</p>
-        <p class="tiny">© <span id="y"></span> vinmatcher.dk</p>
-      </div>
-      <div>
-        <h3 style="margin:0 0 8px;font-size:14px;text-transform:uppercase;letter-spacing:.6px">Hurtige links</h3>
-        <ul class="list">
-          <li><a href="#">Vin til bolognese</a></li>
-          <li><a href="#">Vin til grillmad</a></li>
-          <li><a href="#">Vin til tapas</a></li>
-          <li><a href="#">Vin til ostebord</a></li>
-        </ul>
-      </div>
-      <div>
-        <h3 style="margin:0 0 8px;font-size:14px;text-transform:uppercase;letter-spacing:.6px">Kontakt</h3>
-        <ul class="list">
-          <li><a href="mailto:hej@vinmatcher.dk">Hej@vinmatcher.dk</a></li>
-          <li><a href="#">Kontaktformular</a></li>
-          <li><a href="#">Cookies og privatliv</a></li>
-        </ul>
-      </div>
-    </div>
-  </footer>
+  <div data-include="/partials/footer.html"></div>
 
-  <script>
-    /* global affiliate (shop-specifik tracking tilføjes senere) */
-    const AFFILIATE = { utm:{ source:"vinmatcher", medium:"match", campaign:"pairing" }, subid:"{query}-{id}-{pos}" };
-    function withUtm(url, utm, sub){ try{ const u=new URL(url); u.searchParams.set("utm_source",utm.source); u.searchParams.set("utm_medium",utm.medium); u.searchParams.set("utm_campaign",utm.campaign); if(sub) u.searchParams.set("subid",sub); return u.toString(); }catch(e){ return url; } }
-    function buildLink(productUrl, query, id, pos){ const sub=(AFFILIATE.subid||"{query}-{id}-{pos}").replace("{query}",(query||"homepage")).replace("{id}",id).replace("{pos}",String(pos)); return withUtm(productUrl, AFFILIATE.utm, sub); }
-
-    /* demo-data */
-    const WINES = [
-      { id:"1", name:"Chianti Classico DOCG", shop:"Jysk Vin", price:99, style:"Tør rød, italiensk",
-        features:{acid:3,tannin:3,sweet:0,body:2,oak:1,aromatic:1,alcohol:2},
-        tags:["#Italien","#Sangiovese"], url:"https://www.jyskvin.dk/chianti-classico-docg" },
-      { id:"2", name:"Riesling Kabinett", shop:"Beer Me", price:89, style:"Halvsød hvid, tysk",
-        features:{acid:3,tannin:0,sweet:2,body:1,oak:0,aromatic:3,alcohol:1},
-        tags:["#Tyskland","#Riesling"], url:"https://www.beerme.dk/riesling-kabinett" },
-      { id:"3", name:"Cava Brut", shop:"Jysk Vin", price:69, style:"Tør bobler, spansk",
-        features:{acid:3,tannin:0,sweet:0,body:1,oak:0,aromatic:1,sparkling:1,alcohol:2},
-        tags:["#Spanien","#Cava"], url:"https://www.jyskvin.dk/cava-brut" }
-    ];
-
-    /* chips */
-    const CHIPS = ["Bolognese","Grill aften","Sushi","Ostebord","Tapas","Italien","Hyggestemning"];
-    const chipsEl = document.getElementById("chips");
-    CHIPS.forEach(s=>{ const b=document.createElement("button"); b.className="chip"; b.textContent=s; b.onclick=()=>{ document.getElementById("q").value=s; runSearch(); }; chipsEl.appendChild(b); });
-
-    /* analyse */
-    function analyzeQuery(q){
-      q=(q||"").toLowerCase();
-      const tags=[];
-      if (/(bolognese|tomat|pasta)/.test(q)) tags.push("dish:tomatsauce");
-      if (/(grill|grillet|bbq|røg|røget)/.test(q)) tags.push("tag:grill");
-      if (/(stærk|spicy|chili)/.test(q)) tags.push("taste:spicy");
-      if (/(okse|bøf|rødt kød|oksesteg)/.test(q)) tags.push("protein:red_meat");
-      if (/(fisk|torsk|laks|frisk fisk)/.test(q)) tags.push("protein:fish");
-      if (/(hygg|hygge|stemning)/.test(q)) tags.push("mood:hyggestemning");
-      if (/(italien|italiansk)/.test(q)) tags.push("cuisine:italian");
-      if (/(ost|ostebord|cheese)/.test(q)) tags.push("dish:cheese");
-      if (/(sushi)/.test(q)) tags.push("dish:sushi");
-      return tags;
-    }
-
-    /* scoring */
-    function scoreWine(w, tags){
-      let s=0; const f=k=>(w.features?.[k]||0); const boost=(k,v)=>{ s+=f(k)*v; };
-      tags.forEach(t=>{
-        if (t==="dish:tomatsauce"){ boost("acid",2); boost("tannin",1); }
-        if (t==="tag:grill"){ boost("oak",1); boost("body",1); }
-        if (t==="taste:spicy"){ boost("sweet",2); s-= (f("alcohol")||0); }
-        if (t==="protein:red_meat"){ boost("tannin",2); boost("body",1); }
-        if (t==="protein:fish"){ boost("acid",2); }
-        if (t==="dish:cheese"){ boost("body",1); boost("aromatic",1); }
-        if (t==="dish:sushi"){ boost("acid",2); boost("sparkling",1); }
-        if (t==="cuisine:italian"){ s += w.name.toLowerCase().includes("chianti") ? 2 : 0; }
-      });
-      return Math.max(0, Math.round(70 + s));
-    }
-
-    /* render */
-    function render(results, q){
-      const el=document.getElementById("results");
-      el.innerHTML="";
-      results.forEach(({w,score}, idx)=>{
-        const a=buildLink(w.url, q, w.id, idx+1);
-        const art=document.createElement("article");
-        art.className="card wine-card";
-        art.innerHTML=`
-          <div class="title">${w.name}</div>
-          <div class="meta"><span class="shop"><span class="shop-dot"></span>${w.shop}</span> • ${w.style}</div>
-          <div><span class="badge">Match ${score}%</span> ${(w.tags||[]).join(" ")}</div>
-          <div class="row">
-            <div class="price">${w.price} kr</div>
-            <a class="btn" href="${a}" target="_blank" rel="nofollow sponsored">Se tilbud</a>
-          </div>`;
-        el.appendChild(art);
-      });
-    }
-
-    /* søgning */
-    function runSearch(){
-      const q=document.getElementById("q").value;
-      const tags=analyzeQuery(q);
-      const results=WINES.map(w=>({w, score:scoreWine(w,tags)})).sort((a,b)=>b.score-a.score);
-      render(results, q);
-    }
-
-    document.getElementById("q").addEventListener("input", runSearch);
-    document.getElementById("y").textContent=new Date().getFullYear();
-    runSearch();
-  </script>
+  <script src="/include.js"></script>
+  <script src="/script.js"></script>
 </body>
 </html>

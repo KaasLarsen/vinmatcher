@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kontakt – vinmatcher</title>
+  <meta name="description" content="Skriv til os hvis du har spørgsmål eller ideer.">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div data-include="/partials/header.html"></div>
+  <main class="container">
+    <section class="section">
+      <h1>Kontakt os og del idéer</h1>
+      <div class="card">
+        <form class="newsletter" onsubmit="event.preventDefault(); alert('Tak for din besked');">
+          <input type="text" placeholder="Skriv dit navn">
+          <input type="email" placeholder="Skriv din e-mail">
+          <input type="text" placeholder="Skriv emne for beskeden">
+          <button class="btn" type="submit">Send besked</button>
+        </form>
+        <p class="tiny" style="margin-top:8px">Du kan også skrive til hej@vinmatcher.dk</p>
+      </div>
+    </section>
+    <section class="section">
+      <h2>Ofte stillede spørgsmål</h2>
+      <div class="faq">
+        <div class="qa">
+          <h3>Hvor hurtigt svarer i normalt</h3>
+          <p class="muted">Vi svarer typisk inden for to hverdage</p>
+        </div>
+        <div class="qa">
+          <h3>Kan vi samarbejde om indhold</h3>
+          <p class="muted">Ja, send en kort pitch og vi vender tilbage</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div data-include="/partials/footer.html"></div>
+  <script src="/include.js"></script>
+</body>
+</html>
