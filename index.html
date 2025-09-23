@@ -5,49 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>vinmatcher – find vin til din mad</title>
   <meta name="description" content="skriv mad, ret, stemning eller land – så matcher vi vin fra vores partnere.">
-  <style>
-    :root{
-      --bg:#ffffff;
-      --ink:#111111;
-      --muted:#6b7280;
-      --border:#e5e7eb;
-      --chip:#fafafa;
-      --accent:#7B1E3B; /* vinrød */
-    }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;background:var(--bg);color:var(--ink)}
-    .container{max-width:1000px;margin:0 auto;padding:48px 16px}
-    header .brand{display:flex;gap:12px;align-items:center;margin-bottom:16px}
-    .logo{width:36px;height:36px}
-    h1{font-size:36px;line-height:1.1;margin:8px 0 10px 0;text-transform:none}
-    p.lead{margin:0 0 16px;color:var(--muted)}
-    .search input{width:100%;padding:16px 18px;border:1px solid var(--border);border-radius:12px;font-size:18px}
-    .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-    .chips button{padding:8px 12px;border-radius:20px;border:1px solid var(--border);background:var(--chip);cursor:pointer}
-    .grid{margin-top:28px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
-    .card{border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px}
-    .title{font-weight:700}
-    .meta{color:var(--muted);font-size:14px}
-    .row{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
-    .price{font-weight:800}
-    .btn{padding:10px 12px;border-radius:10px;background:#111;color:#fff;text-decoration:none;font-weight:600}
-    .badge{display:inline-block;padding:3px 8px;border-radius:999px;background:#f1f1f1;font-size:12px;margin-right:6px}
-    .disclaimer{font-size:12px;color:var(--muted);margin-top:16px}
-    footer{margin-top:40px;font-size:12px;color:var(--muted)}
-    .shop{display:inline-flex;align-items:center;gap:6px}
-    .shop-dot{width:8px;height:8px;border-radius:999px;background:var(--accent);display:inline-block}
-    .brand-name{font-weight:700;letter-spacing:.2px}
-    .hero{margin-bottom:8px}
-    .small{font-size:12px;color:var(--muted)}
-    .icon{vertical-align:middle}
-    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <main class="container">
     <header class="hero">
       <div class="brand">
-        <!-- inline minimalistisk ikon (vinglas + check) -->
         <svg class="logo" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path fill="none" stroke="black" stroke-width="4" d="M18 6h28v8c0 9-7 16-16 16s-16-7-16-16V6z"/>
           <path fill="none" stroke="black" stroke-width="4" d="M32 30v16m-10 12h20"/>
@@ -74,140 +37,6 @@
     <footer>© <span id="y"></span> vinmatcher.dk</footer>
   </main>
 
-  <script>
-    // ---- global affiliate config (skift kun her) ----
-    const AFFILIATE = {
-      utm: { source: "vinmatcher", medium: "match", campaign: "pairing" },
-      subid: "{query}-{id}-{pos}",
-      shops: {
-        // indsæt dine rigtige netværksskabeloner hvis nødvendigt.
-        // eksempel: "Jysk Vin": { template: "https://track.example/clk?url={url}&subid={sub}" }
-      }
-    };
-
-    function withUtm(url, utm, sub){
-      try{
-        const u = new URL(url);
-        u.searchParams.set("utm_source", utm.source);
-        u.searchParams.set("utm_medium", utm.medium);
-        u.searchParams.set("utm_campaign", utm.campaign);
-        if (sub) u.searchParams.set("subid", sub);
-        return u.toString();
-      }catch(e){ return url; }
-    }
-
-    function buildAffiliateLink(shop, productUrl, query, id, pos){
-      const sub = (AFFILIATE.subid||"{query}-{id}-{pos}")
-        .replace("{query}", (query||"homepage"))
-        .replace("{id}", id)
-        .replace("{pos}", String(pos));
-      const urlWithUtm = withUtm(productUrl, AFFILIATE.utm, sub);
-      const shopCfg = AFFILIATE.shops[shop];
-      if (shopCfg && shopCfg.template){
-        return shopCfg.template
-          .replace("{url}", encodeURIComponent(urlWithUtm))
-          .replace("{sub}", encodeURIComponent(sub));
-      }
-      return urlWithUtm;
-    }
-
-    // ---- demo data (du kan senere hente fra en json) ----
-    const WINES = [
-      { id:"1", name:"Chianti Classico DOCG", shop:"Jysk Vin", price:99, style:"tør rød, italiensk",
-        features:{acid:3,tannin:3,sweet:0,body:2,oak:1,aromatic:1,alcohol:2},
-        tags:["#italien","#sangiovese"],
-        url:"https://www.jyskvin.dk/chianti-classico-docg"
-      },
-      { id:"2", name:"Riesling Kabinett", shop:"Beer Me", price:89, style:"halvsød hvid, tysk",
-        features:{acid:3,tannin:0,sweet:2,body:1,oak:0,aromatic:3,alcohol:1},
-        tags:["#tyskland","#riesling"],
-        url:"https://www.beerme.dk/riesling-kabinett"
-      },
-      { id:"3", name:"Cava Brut", shop:"Jysk Vin", price:69, style:"tør bobler, spansk",
-        features:{acid:3,tannin:0,sweet:0,body:1,oak:0,aromatic:1,sparkling:1,alcohol:2},
-        tags:["#spanien","#cava"],
-        url:"https://www.jyskvin.dk/cava-brut"
-      }
-    ];
-
-    // ---- chips ----
-    const CHIPS = ["bolognese","grill aften","sushi","ostebord","tapas","italien","hyggestemning"];
-    const chipsEl = document.getElementById("chips");
-    CHIPS.forEach(s=>{
-      const b=document.createElement("button");
-      b.textContent=s; b.onclick=()=>{ document.getElementById("q").value=s; runSearch(); };
-      chipsEl.appendChild(b);
-    });
-
-    // ---- query → tags ----
-    function analyzeQuery(q){
-      q = (q||'').toLowerCase();
-      const tags = [];
-      if (/(bolognese|tomat|pasta)/.test(q)) tags.push("dish:tomatsauce");
-      if (/(grill|grillet|bbq|røg|røget)/.test(q)) tags.push("tag:grill");
-      if (/(stærk|spicy|chili)/.test(q)) tags.push("taste:spicy");
-      if (/(okse|bøf|rødt kød|oksesteg)/.test(q)) tags.push("protein:red_meat");
-      if (/(fisk|torsk|laks|frisk fisk)/.test(q)) tags.push("protein:fish");
-      if (/(hygg|hygge|stemning)/.test(q)) tags.push("mood:hyggestemning");
-      if (/(italien|italiansk)/.test(q)) tags.push("cuisine:italian");
-      if (/(ost|ostebord|cheese)/.test(q)) tags.push("dish:cheese");
-      if (/(sushi)/.test(q)) tags.push("dish:sushi");
-      if (/(jul|julemad|flæskesteg|and)/.test(q)) tags.push("season:jul");
-      return tags;
-    }
-
-    // ---- scoring ----
-    function scoreWine(w, tags){
-      let s = 0;
-      const f = (k)=> (w.features?.[k]||0);
-      const boost = (k,v)=>{ s += f(k)*v; };
-      tags.forEach(t=>{
-        if (t==="dish:tomatsauce"){ boost("acid",2); boost("tannin",1); }
-        if (t==="tag:grill"){ boost("oak",1); boost("body",1); }
-        if (t==="taste:spicy"){ boost("sweet",2); s -= (f("alcohol")||0)*1; }
-        if (t==="protein:red_meat"){ boost("tannin",2); boost("body",1); }
-        if (t==="protein:fish"){ boost("acid",2); }
-        if (t==="dish:cheese"){ boost("body",1); boost("aromatic",1); }
-        if (t==="dish:sushi"){ boost("acid",2); boost("sparkling",1); }
-        if (t==="mood:hyggestemning"){ boost("aromatic",1); boost("oak",1); }
-        if (t==="cuisine:italian"){ s += w.name.toLowerCase().includes("chianti") ? 2 : 0; }
-        if (t==="season:jul"){ boost("body",1); boost("oak",1); }
-      });
-      return Math.max(0, Math.round(70 + s)); // baseline
-    }
-
-    // ---- render ----
-    function render(results, q){
-      const el = document.getElementById("results");
-      el.innerHTML = "";
-      results.forEach(({w,score}, idx)=>{
-        const href = buildAffiliateLink(w.shop, w.url, q, w.id, idx+1);
-        const card=document.createElement("article"); card.className="card";
-        card.innerHTML = `
-          <div class="title">${w.name}</div>
-          <div class="meta"><span class="shop"><span class="shop-dot"></span>${w.shop}</span> • ${w.style}</div>
-          <div><span class="badge">match ${score}%</span>${(w.tags||[]).join(" ")}</div>
-          <div class="row">
-            <div class="price">${w.price} kr</div>
-            <a class="btn" href="${href}" target="_blank" rel="nofollow sponsored">se tilbud</a>
-          </div>`;
-        el.appendChild(card);
-      });
-    }
-
-    // ---- search ----
-    function runSearch(){
-      const q = document.getElementById("q").value;
-      const tags = analyzeQuery(q);
-      const results = WINES
-        .map(w=>({ w, score: scoreWine(w, tags)}))
-        .sort((a,b)=> b.score - a.score);
-      render(results, q);
-    }
-
-    document.getElementById("q").addEventListener("input", runSearch);
-    document.getElementById("y").textContent = new Date().getFullYear();
-    runSearch();
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>

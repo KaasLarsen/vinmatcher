@@ -1,0 +1,35 @@
+:root{
+  --bg:#ffffff;
+  --ink:#111111;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --chip:#fafafa;
+  --accent:#7B1E3B;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+.container{max-width:1000px;margin:0 auto;padding:48px 16px}
+header .brand{display:flex;gap:12px;align-items:center;margin-bottom:16px}
+.logo{width:36px;height:36px}
+h1{font-size:36px;line-height:1.1;margin:8px 0 10px 0;text-transform:none}
+p.lead{margin:0 0 16px;color:var(--muted)}
+.search input{width:100%;padding:16px 18px;border:1px solid var(--border);border-radius:12px;font-size:18px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chips button{padding:8px 12px;border-radius:20px;border:1px solid var(--border);background:var(--chip);cursor:pointer}
+.grid{margin-top:28px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.card{border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.title{font-weight:700}
+.meta{color:var(--muted);font-size:14px}
+.row{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.price{font-weight:800}
+.btn{padding:10px 12px;border-radius:10px;background:#111;color:#fff;text-decoration:none;font-weight:600}
+.badge{display:inline-block;padding:3px 8px;border-radius:999px;background:#f1f1f1;font-size:12px;margin-right:6px}
+.disclaimer{font-size:12px;color:var(--muted);margin-top:16px}
+footer{margin-top:40px;font-size:12px;color:var(--muted)}
+.shop{display:inline-flex;align-items:center;gap:6px}
+.shop-dot{width:8px;height:8px;border-radius:999px;background:var(--accent);display:inline-block}
+.brand-name{font-weight:700;letter-spacing:.2px}
+.hero{margin-bottom:8px}
+.small{font-size:12px;color:var(--muted)}
+.icon{vertical-align:middle}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
