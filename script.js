@@ -1,6 +1,4 @@
 // === Affiliate tracking pr. butik (Partner-ads) ===
-// Brug de skabeloner du sendte (PRODUKTLINK udskiftes automatisk)
-// Der tilføjes også ?subid=... hvis det ikke findes i skabelonen.
 const SHOP_TRACKING = {
   "Den Sidste Flaske":
     "https://www.partner-ads.com/dk/klikbanner.php?partnerid=50537&bannerid=68720&htmlurl=PRODUKTLINK",
@@ -16,7 +14,6 @@ const AFFILIATE = {
   subid: "{query}-{id}-{pos}" // søgetekst + produkt-id + position
 };
 
-// Læg UTM + subid på et “rent” produktlink
 function withUtm(url, utm, sub) {
   try {
     const u = new URL(url);
@@ -25,28 +22,20 @@ function withUtm(url, utm, sub) {
     u.searchParams.set("utm_campaign", utm.campaign);
     if (sub) u.searchParams.set("subid", sub);
     return u.toString();
-  } catch (e) {
-    return url; // hvis URL-parser fejler, brug original
-  }
+  } catch (e) { return url; }
 }
 
-// Byg endeligt affiliate-link (Partner-ads redirect pr. butik)
 function buildLink(shop, productUrl, query, id, pos) {
   const sub = (AFFILIATE.subid || "{query}-{id}-{pos}")
     .replace("{query}", (query || "homepage"))
     .replace("{id}", id)
     .replace("{pos}", String(pos));
 
-  // læg UTM på det rene produktlink
   const urlWithUtm = withUtm(productUrl, AFFILIATE.utm, sub);
 
   const tpl = SHOP_TRACKING[shop];
-  if (!tpl) {
-    // fallback: direkte link med UTM hvis vi ikke har skabelon
-    return urlWithUtm;
-  }
+  if (!tpl) return urlWithUtm;
 
-  // erstat PRODUKTLINK + tilføj subid hvis skabelonen ikke allerede har det
   let out = tpl.replace("PRODUKTLINK", encodeURIComponent(urlWithUtm));
   if (!/[?&]subid=/.test(out)) {
     out += (out.includes("?") ? "&" : "?") + "subid=" + encodeURIComponent(sub);
@@ -55,7 +44,6 @@ function buildLink(shop, productUrl, query, id, pos) {
 }
 
 // === Produkter til forsiden (“Se dine bedste match her”) ===
-// Priser sat til null → UI viser “Se pris”. Udfyld tal når du har dem.
 const WINES = [
   {
     id: "dsf1",
@@ -65,7 +53,8 @@ const WINES = [
     style: "Tør rød, italiensk",
     features: { acid: 2, tannin: 2, sweet: 1, body: 3, oak: 1, aromatic: 1, alcohol: 2 },
     tags: ["#Italien", "#Primitivo", "#Susumaniello"],
-    url: "https://densidsteflaske.dk/products/primitivo-susumaniello-salento-boccantino-2024"
+    url: "https://densidsteflaske.dk/products/primitivo-susumaniello-salento-boccantino-2024",
+    img: "/images/boccantino.webp"
   },
   {
     id: "dh2",
@@ -75,7 +64,8 @@ const WINES = [
     style: "Tør rød, sydafrikansk",
     features: { acid: 2, tannin: 1, sweet: 0, body: 2, oak: 1, aromatic: 2, alcohol: 2 },
     tags: ["#Sydafrika", "#PinotNoir"],
-    url: "https://dhwines.dk/products/david-finlayson-pinot-noir-2022"
+    url: "https://dhwines.dk/products/david-finlayson-pinot-noir-2022",
+    img: "/images/finlayson.webp"
   },
   {
     id: "wv3",
@@ -85,7 +75,8 @@ const WINES = [
     style: "Tør rød, californisk",
     features: { acid: 1, tannin: 2, sweet: 1, body: 3, oak: 2, aromatic: 1, alcohol: 3 },
     tags: ["#USA", "#Zinfandel", "#2021"],
-    url: "https://winthervin.dk/shop/think-big-zinfandel-2021-75-cl/"
+    url: "https://winthervin.dk/shop/think-big-zinfandel-2021-75-cl/",
+    img: "/images/thinkbig.png"
   }
 ];
 
@@ -121,13 +112,12 @@ function scoreWine(w, tags) {
     if (t === "dish:sushi") { boost("acid", 2); boost("sparkling", 1); }
     if (t === "cuisine:italian") { s += w.name.toLowerCase().includes("chianti") ? 2 : 0; }
   });
-  return Math.max(0, Math.round(70 + s)); // baseline for pæn skala
+  return Math.max(0, Math.round(70 + s));
 }
 
-// Render kortene i “Se dine bedste match her”
 function render(results, q) {
   const el = document.getElementById("results");
-  if (!el) return; // hvis siden ikke har sektionen endnu
+  if (!el) return;
   el.innerHTML = "";
   results.forEach(({ w, score }, idx) => {
     const a = buildLink(w.shop, w.url, q, w.id, idx + 1);
@@ -135,6 +125,7 @@ function render(results, q) {
     const art = document.createElement("article");
     art.className = "card wine-card";
     art.innerHTML = `
+      ${w.img ? `<img src="${w.img}" alt="${w.name}" loading="lazy" decoding="async">` : ""}
       <div class="title">${w.name}</div>
       <div class="meta"><span class="shop"><span class="shop-dot"></span>${w.shop}</span> • ${w.style}</div>
       <div><span class="badge">Match ${score}%</span> ${(w.tags || []).join(" ")}</div>
@@ -146,19 +137,15 @@ function render(results, q) {
   });
 }
 
-// Kør søgning + byg chips
 function runSearch() {
   const qEl = document.getElementById("q");
   const q = qEl ? qEl.value : "";
   const tags = analyzeQuery(q);
-  const results = WINES
-    .map(w => ({ w, score: scoreWine(w, tags) }))
-    .sort((a, b) => b.score - a.score);
+  const results = WINES.map(w => ({ w, score: scoreWine(w, tags) })).sort((a, b) => b.score - a.score);
   render(results, q);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // chips (valgfrit)
   const chipsEl = document.getElementById("chips");
   if (chipsEl) {
     CHIPS.forEach(s => {
@@ -172,9 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
       chipsEl.appendChild(b);
     });
   }
-
   const q = document.getElementById("q");
   if (q) q.addEventListener("input", runSearch);
-
   runSearch();
 });
