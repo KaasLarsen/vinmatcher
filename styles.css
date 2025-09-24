@@ -131,4 +131,11 @@ body{
 /* gør vin-kort ens i højden og layoutet stabilt */
 .wine-card{display:flex;flex-direction:column}
 .wine-card .row{margin-top:auto} /* skubber pris/knap i bunden */
+
+/* mere luft i vin-kortet */
+.wine-card .title{margin-bottom:6px}
+.wine-card .meta{margin:4px 0 10px}
+.wine-card .badge{margin-right:8px}
+.wine-card .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.wine-card .tags .tag{background:#f6f7f9;border:1px solid var(--line);padding:4px 10px;border-radius:999px;font-size:12px;font-weight:800}
 }
