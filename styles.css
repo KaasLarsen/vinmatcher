@@ -116,4 +116,14 @@ body{
 @media (max-width:900px){
   .faq{grid-template-columns:1fr}
   .site-footer .wrap{grid-template-columns:1fr}
+
+  /* vin-billeder – ens størrelse og hvid baggrund */
+.wine-card img{
+  width:100%;
+  height:240px;
+  object-fit:contain;
+  background:#fff;
+  border-radius:12px;
+  margin-bottom:12px;
+  display:block;
 }
