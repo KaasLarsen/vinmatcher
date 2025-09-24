@@ -8,6 +8,13 @@ const SHOP_TRACKING = {
     "https://www.partner-ads.com/dk/klikbanner.php?partnerid=50537&bannerid=76709&htmlurl=PRODUKTLINK"
 };
 
+// Butikkernes forsider (rene links – vi lægger UTM + tracking på)
+const SHOP_HOMEPAGES = {
+  "Den Sidste Flaske": "https://densidsteflaske.dk/",
+  "DH Wines": "https://dhwines.dk/",
+  "Winther Vin": "https://winthervin.dk/"
+};
+
 // Global UTM + subid-mønster
 const AFFILIATE = {
   utm: { source: "vinmatcher", medium: "match", campaign: "pairing" },
@@ -32,15 +39,20 @@ function buildLink(shop, productUrl, query, id, pos) {
     .replace("{pos}", String(pos));
 
   const urlWithUtm = withUtm(productUrl, AFFILIATE.utm, sub);
-
   const tpl = SHOP_TRACKING[shop];
   if (!tpl) return urlWithUtm;
-
   let out = tpl.replace("PRODUKTLINK", encodeURIComponent(urlWithUtm));
   if (!/[?&]subid=/.test(out)) {
     out += (out.includes("?") ? "&" : "?") + "subid=" + encodeURIComponent(sub);
   }
   return out;
+}
+
+// Affiliate-link til butikkens forside
+function buildShopLink(shop, query, id, pos){
+  const home = SHOP_HOMEPAGES[shop];
+  if (!home) return "#";
+  return buildLink(shop, home, query, id + "-shop", pos);
 }
 
 // === Produkter til forsiden (“Se dine bedste match her”) ===
@@ -120,18 +132,29 @@ function render(results, q) {
   if (!el) return;
   el.innerHTML = "";
   results.forEach(({ w, score }, idx) => {
-    const a = buildLink(w.shop, w.url, q, w.id, idx + 1);
+    const productHref = buildLink(w.shop, w.url, q, w.id, idx + 1);
+    const shopHref = buildShopLink(w.shop, q, w.id, idx + 1);
     const priceTxt = (w.price || w.price === 0) ? `${w.price} kr` : "Se pris";
+
+    const tagsHtml = (w.tags || []).map(t => `<span class="tag">${t}</span>`).join(" ");
+
     const art = document.createElement("article");
     art.className = "card wine-card";
     art.innerHTML = `
       ${w.img ? `<img src="${w.img}" alt="${w.name}" loading="lazy" decoding="async">` : ""}
       <div class="title">${w.name}</div>
-      <div class="meta"><span class="shop"><span class="shop-dot"></span>${w.shop}</span> • ${w.style}</div>
-      <div><span class="badge">Match ${score}%</span> ${(w.tags || []).join(" ")}</div>
+      <div class="meta">
+        <a class="shop" href="${shopHref}" target="_blank" rel="nofollow sponsored">
+          <span class="shop-dot"></span>${w.shop}
+        </a> • ${w.style}
+      </div>
+      <div>
+        <span class="badge">Match ${score}%</span>
+        <span class="tags">${tagsHtml}</span>
+      </div>
       <div class="row">
         <div class="price">${priceTxt}</div>
-        <a class="btn" href="${a}" target="_blank" rel="nofollow sponsored">Se tilbud</a>
+        <a class="btn" href="${productHref}" target="_blank" rel="nofollow sponsored">Se tilbud</a>
       </div>`;
     el.appendChild(art);
   });
@@ -152,10 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const b = document.createElement("button");
       b.className = "chip";
       b.textContent = s;
-      b.onclick = () => {
-        const q = document.getElementById("q");
-        if (q) { q.value = s; runSearch(); }
-      };
+      b.onclick = () => { const q = document.getElementById("q"); if (q) { q.value = s; runSearch(); } };
       chipsEl.appendChild(b);
     });
   }
